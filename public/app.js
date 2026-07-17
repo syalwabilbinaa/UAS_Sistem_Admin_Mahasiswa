@@ -1,5 +1,5 @@
 // --- Data Management & Endpoints ---
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzNxzoDw-okWNlR7wg4AUGZBk4kaj4aRNpRCS5C0gS6b_Tw9upH1eexnHEoe1waswJfdQ/exec';
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx5GzBIYR_qS5tzw9b-7pj_4DzcXWKSxEwT2U9PCvdFRLI1OYE8oKMbe7A0QpIMasAEaw/exec';
 
 let appData = { users: [], dosen: {}, mataKuliah: {}, students: {} };
 let currentUser = null;
