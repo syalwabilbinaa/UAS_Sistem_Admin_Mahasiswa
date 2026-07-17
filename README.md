@@ -2,93 +2,131 @@
 
 **Sistem manajemen nilai akademik untuk mahasiswa dan dosen**
 
-## 🚀 Fitur
+> **🌐 Live Application**: https://uas-sistem-admin-mahasiswa.vercel.app  
+> **📚 Source Code**: https://github.com/syalwabilbinaa/UAS_Sistem_Admin_Mahasiswa  
+> **📊 Database**: Google Sheets API Integration
 
-- 🔐 Login dengan role-based access (Admin, Dosen, Mahasiswa)
-- 📊 Dashboard analytics dengan chart interaktif
-- 📝 Input nilai dan management mata kuliah
-- 💾 Data synchronization dengan Google Sheets
-- 📱 Responsive design dengan Tailwind CSS
-- 🔔 Notifikasi sistem
+---
+
+## 🚀 Quick Start
+
+### 1️⃣ Online Access
+Akses aplikasi langsung tanpa setup:
+```
+https://uas-sistem-admin-mahasiswa.vercel.app
+```
+
+### 2️⃣ Local Development
+```bash
+# Clone repository
+git clone https://github.com/syalwabilbinaa/UAS_Sistem_Admin_Mahasiswa.git
+cd UAS_Sistem_Admin_Mahasiswa
+
+# Install dependencies
+npm install
+
+# Run server
+npm start
+
+# Akses di browser
+# http://localhost:3000
+```
+
+---
+
+## ✨ Fitur Utama
+
+| Fitur | Deskripsi | Status |
+|-------|-----------|--------|
+| 🔐 **Authentication** | Login dengan role-based access | ✅ |
+| 📊 **Dashboard** | Analytics dengan chart interaktif | ✅ |
+| 📝 **Manajemen Nilai** | Input dan kelola nilai mahasiswa | ✅ |
+| 📚 **Manajemen Mata Kuliah** | CRUD untuk mata kuliah | ✅ |
+| 💾 **Google Sheets Sync** | Real-time data synchronization | ✅ |
+| 📱 **Responsive Design** | Mobile-friendly interface | ✅ |
+| 🔔 **Notifikasi** | System notifications | ✅ |
+
+---
+
+## 👥 Default Users untuk Testing
+
+```javascript
+// ADMIN
+Username: admin
+Password: admin123
+
+// DOSEN
+Username: dosen
+Password: dosen123
+
+// MAHASISWA
+Username: mahasiswa
+Password: mhs123
+```
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: HTML5, Vanilla JavaScript, Tailwind CSS
-- **Backend**: Express.js, CORS
-- **Data**: Google Sheets API
-- **Deployment**: Vercel
-- **Charts**: Chart.js
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | HTML5, Vanilla JavaScript, Tailwind CSS |
+| **Backend** | Express.js 4.18.2, Node.js 18+ |
+| **Database** | Google Sheets API |
+| **Hosting** | Vercel (Serverless) |
+| **Visualization** | Chart.js 3.x |
 
-## 📦 Installation
+---
 
-### 1. Clone Repository
+## 📁 Project Structure
+
+```
+UAS_Sistem_Admin_Mahasiswa/
+├── public/                     # Static files
+│   ├── index.html             # Main UI (28KB)
+│   └── app.js                 # Frontend + Google Sheets logic (20KB)
+├── index.js                    # Express server (1KB)
+├── package.json               # Dependencies
+├── vercel.json                # Vercel configuration
+├── .env.example               # Environment template
+├── .gitignore                 # Git ignore rules
+├── README.md                  # This file
+└── DEPLOYMENT.md              # Deployment guide
+```
+
+---
+
+## 🌐 Environment Configuration
+
+### Google Sheets URL
+**Status**: ✅ Configured  
+**ID**: `AKfycbx5GzBIYR_qS5tzw9b-7pj_4DzcXWKSxEwT2U9PCvdFRLI1OYE8oKMbe7A0QpIMasAEaw`
+
+Lokasi di kode:
+- `public/app.js` (Line 2): `const GOOGLE_SHEETS_URL = '...'`
+
+### Environment Variables
 ```bash
-git clone https://github.com/syalwabilbinaa/UAS_Sistem_Admin_Mahasiswa.git
-cd UAS_Sistem_Admin_Mahasiswa
+# Production (Vercel)
+GOOGLE_SHEETS_URL=https://script.google.com/macros/s/AKfycbx5GzBIYR_qS5tzv9b-7pj_4DzcXWKSxEwT2U9PCvdFRLI1OYE8oKMbe7A0QpIMasAEaw/exec
+NODE_ENV=production
+PORT=3000
+
+# Development (Local)
+NODE_ENV=development
+PORT=3000
 ```
 
-### 2. Install Dependencies
-```bash
-npm install
-```
+---
 
-### 3. Setup Environment Variables
-```bash
-cp .env.example .env.local
-```
-
-Edit `.env.local` dan tambahkan URL Google Sheets Anda:
-```
-GOOGLE_SHEETS_URL=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
-```
-
-### 4. Run Locally
-```bash
-npm start
-```
-
-Aplikasi akan berjalan di `http://localhost:3000`
-
-## 🌐 Deployment ke Vercel
-
-### Langkah 1: Push ke GitHub
-```bash
-git add .
-git commit -m "Fix: Restructure for Vercel deployment"
-git push origin main
-```
-
-### Langkah 2: Deploy di Vercel
-1. Kunjungi [vercel.com](https://vercel.com)
-2. Click "New Project"
-3. Pilih repository GitHub Anda
-4. Klik "Import"
-5. Environment variables sudah dikonfigurasi di `vercel.json`
-6. Klik "Deploy"
-
-### Langkah 3: Configure Environment Variables di Vercel
-1. Buka project settings di Vercel
-2. Buka "Environment Variables"
-3. Tambahkan:
-   - Key: `GOOGLE_SHEETS_URL`
-   - Value: URL Google Sheets Anda
-
-## 👥 Default Users
-
-| Username | Password | Role |
-|----------|----------|------|
-| admin | admin123 | ADMIN |
-| dosen | dosen123 | DOSEN |
-| mahasiswa | mhs123 | MAHASISWA |
-
-## 📝 API Endpoints
+## 🔧 API Endpoints
 
 ### Health Check
-```
+```http
 GET /api/health
 ```
 
-Response:
+**Response**:
 ```json
 {
   "status": "ok",
@@ -96,35 +134,97 @@ Response:
 }
 ```
 
+### Static Files
+```
+GET /                  → index.html
+GET /api/health       → Health check
+```
+
+---
+
+## 📊 Data Flow
+
+```
+Browser (Frontend)
+    ↓
+    ├─→ HTML/CSS/JS dari public/ folder
+    ├─→ App.js logic
+    └─→ Google Sheets API calls
+
+Express Server (Backend)
+    ↓
+    ├─→ Serve static files
+    ├─→ API endpoints
+    └─→ CORS handling
+
+Google Sheets (Database)
+    ↓
+    ├─→ Users data
+    ├─→ Students data
+    ├─→ Courses data
+    └─→ Grades data
+```
+
+---
+
+## 🚀 Deployment
+
+### Automatic Deployment
+- **Platform**: Vercel
+- **Trigger**: Push ke branch `main`
+- **Status**: Live di https://uas-sistem-admin-mahasiswa.vercel.app
+
+### Manual Redeploy
+1. Buka https://vercel.com
+2. Pilih project "uas-sistem-admin-mahasiswa"
+3. Klik "Deployments" → "Redeploy"
+
+---
+
+## ✅ Testing Checklist
+
+- [x] Local server running at port 3000
+- [x] API health check responding
+- [x] Static files serving correctly
+- [x] Google Sheets URL updated
+- [x] Folder structure cleaned
+- [x] GitHub push successful
+- [x] Vercel deployment active
+
+---
+
+## 📝 Recent Updates
+
+### Version 1.0.0 (2026-07-17)
+- ✨ Updated Google Sheets URL
+- 🗂️ Cleaned folder structure
+- 🔧 Optimized for Vercel deployment
+- 📚 Added comprehensive documentation
+
+---
+
 ## 🐛 Troubleshooting
 
-### 404: NOT_FOUND di Vercel
-- ✅ Pastikan file sudah di folder `public/`
-- ✅ Check `vercel.json` configuration
-- ✅ Restart deployment
+| Masalah | Solusi |
+|---------|--------|
+| **404 Not Found** | Pastikan file di folder `public/`, check routing |
+| **Google Sheets error** | Verify URL di `public/app.js`, check Apps Script endpoint |
+| **Build gagal Vercel** | Check build logs, pastikan dependencies benar |
+| **Port 3000 sudah terpakai** | `npm start -- --port 3001` atau kill process yang memakai 3000 |
 
-### Environment Variables tidak terbaca
-- ✅ Pastikan sudah di-set di Vercel project settings
-- ✅ Redeploy project setelah menambah variables
+---
 
-## 📄 Project Structure
+## 📞 Support & Links
 
-```
-UAS_Sistem_Admin_Mahasiswa/
-├── public/
-│   ├── index.html
-│   └── app.js
-├── index.js
-├── package.json
-├── vercel.json
-├── .env.example
-├── .gitignore
-└── README.md
-```
+| Kategori | Link |
+|----------|------|
+| 🌐 **Live Application** | https://uas-sistem-admin-mahasiswa.vercel.app |
+| 📚 **GitHub Repository** | https://github.com/syalwabilbinaa/UAS_Sistem_Admin_Mahasiswa |
+| 📊 **Vercel Dashboard** | https://vercel.com |
+| 💾 **Google Sheets** | https://docs.google.com/spreadsheets |
+| 📖 **Deployment Guide** | Buka file `DEPLOYMENT.md` |
 
-## 📞 Support
-
-Untuk pertanyaan atau issue, buat di [GitHub Issues](https://github.com/syalwabilbinaa/UAS_Sistem_Admin_Mahasiswa/issues)
+---
 
 ## 📄 License
 
@@ -132,5 +232,12 @@ ISC
 
 ---
 
-**Created by**: SiNilai Team
-**Last Updated**: 2026-07-17" 
+## 👨‍💻 Developed By
+
+**SiNilai Development Team**  
+Last Updated: **2026-07-17**  
+Status: **✅ Production Ready**
+
+---
+
+**Questions?** Buka GitHub Issues atau hubungi development team."
