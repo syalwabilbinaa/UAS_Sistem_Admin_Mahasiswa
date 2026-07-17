@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiNilai - Archival Prestige System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Library Ekspor PDF Otomatis Masuk Laptop -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* Palet Warna Baru: Super Soft Premium Warm Sand & Muted Gold */
+        .text-soft-gold {
+            background: linear-gradient(135deg, #a38247 0%, #c5a872 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-active {
+            background: linear-gradient(90deg, rgba(197, 168, 114, 0.08) 0%, rgba(197, 168, 114, 0.02) 100%);
+            color: #94753c;
+            border-left: 3px solid #c5a872;
+            font-weight: 600;
+        }
+        .luxe-vessel {
+            background: #ffffff;
+            border: 1px solid rgba(197, 168, 114, 0.15);
+            box-shadow: 0 4px 20px -2px rgba(148, 117, 60, 0.03);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .luxe-vessel:hover {
+            border-color: rgba(197, 168, 114, 0.35);
+            box-shadow: 0 10px 25px -5px rgba(148, 117, 60, 0.08);
+            transform: translateY(-1px);
+        }
+        .btn-gold-solid {
+            background: linear-gradient(135deg, #94753c 0%, #c5a872 100%);
+            color: #ffffff;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+            box-shadow: 0 4px 14px rgba(197, 168, 114, 0.2);
+            transition: all 0.2s ease;
+        }
+        .btn-gold-solid:hover {
+            filter: brightness(1.03);
+            box-shadow: 0 6px 18px rgba(197, 168, 114, 0.3);
+        }
+        .luxury-input {
+            background: #fdfdfd !important;
+            border: 1px solid #e8e8e8;
+            color: #334155;
+            transition: all 0.2s ease;
+            border-radius: 10px;
+        }
+        .luxury-input:focus {
+            border-color: #c5a872 !important;
+            box-shadow: 0 0 0 3px rgba(197, 168, 114, 0.1) !important;
+            background: #ffffff !important;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="bg-[#faf9f6] text-slate-600 antialiased">
+    
+    <!-- Animasi Loading System -->
+    <div id="loading-overlay" class="fixed inset-0 bg-[#faf9f6] z-50 flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative w-12 h-12 mb-4 flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full border-2 border-slate-100"></div>
+            <div class="absolute inset-0 rounded-full border-t-2 border-b-2 border-[#c5a872] animate-spin"></div>
+        </div>
+        <h2 class="text-xs font-semibold tracking-widest text-slate-400 uppercase">Memuat Sistem...</h2>
+    </div>
+
+    <!-- PORTAL AUTHENTICATION MANUAL (LOGIN & REGISTER) -->
+    <div id="auth-portal" class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+        <div class="luxe-vessel max-w-md w-full rounded-2xl p-8 space-y-6 shadow-xl relative">
+            
+            <!-- FORM LOGIN MANUAL -->
+            <div id="login-box" class="space-y-4">
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-[#faf9f6] rounded-full flex items-center justify-center mx-auto mb-3 border border-amber-100">
+                        <i class="fas fa-lock text-[#c5a872]"></i>
+                    </div>
+                    <h2 class="text-lg font-bold tracking-wider text-slate-800">GERBANG MASUK SINILAI</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Silakan masuk menggunakan akun terdaftar Anda</p>
+                </div>
+                <form onsubmit="handleManualLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Nama Pengguna (Username)</label>
+                        <input type="text" id="login-username" required class="w-full px-4 py-2.5 luxury-input text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Kata Sandi (Password)</label>
+                        <input type="password" id="login-password" required class="w-full px-4 py-2.5 luxury-input text-xs">
+                    </div>
+                    <button type="submit" class="w-full btn-gold-solid py-3 rounded-xl text-xs font-semibold mt-2">Masuk ke Sistem</button>
+                </form>
+                <p class="text-center text-xs text-slate-400 mt-4">Belum memiliki akun resmi? <a href="#" onclick="toggleAuthBox('register')" class="text-[#94753c] font-semibold hover:underline">Daftar Akun Baru</a></p>
+            </div>
+
+            <!-- FORM REGISTER MANUAL -->
+            <div id="register-box" class="space-y-4 hidden">
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-[#faf9f6] rounded-full flex items-center justify-center mx-auto mb-3 border border-amber-100">
+                        <i class="fas fa-user-plus text-[#c5a872]"></i>
+                    </div>
+                    <h2 class="text-lg font-bold tracking-wider text-slate-800">REGISTRASI HAK AKSES</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Buat kredensial otentikasi baru</p>
+                </div>
+                <form onsubmit="handleManualRegister(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Nama Lengkap</label>
+                        <input type="text" id="reg-nama" required class="w-full px-4 py-2.5 luxury-input text-xs" placeholder="Contoh: Budi Santoso, M.T.">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Username Baru</label>
+                        <input type="text" id="reg-username" required class="w-full px-4 py-2.5 luxury-input text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Password</label>
+                        <input type="password" id="reg-password" required class="w-full px-4 py-2.5 luxury-input text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Tingkat Otoritas (Role)</label>
+                        <select id="reg-role" required class="w-full px-4 py-2.5 bg-[#fdfdfd] border border-slate-200 rounded-xl text-xs text-slate-600 outline-none focus:border-[#c5a872]">
+                            <option value="ADMIN">ADMINISTRATOR (Full Akses)</option>
+                            <option value="DOSEN">DOSEN PENGAJAR (Input Nilai)</option>
+                            <option value="MAHASISWA">MAHASISWA (Lihat KHS)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full btn-gold-solid py-3 rounded-xl text-xs font-semibold mt-2">Daftarkan Akun Resmi</button>
+                </form>
+                <p class="text-center text-xs text-slate-400 mt-4">Sudah terdaftar sebelumnya? <a href="#" onclick="toggleAuthBox('login')" class="text-[#94753c] font-semibold hover:underline">Kembali ke Login</a></p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MAIN WORKSPACE CORE FRAMEWORK -->
+    <div class="flex flex-col md:flex-row h-screen overflow-hidden">
+        
+        <aside class="w-full md:w-64 bg-white flex-shrink-0 z-20 border-b md:border-b-0 md:border-r border-slate-200/60 shadow-sm">
+            <div class="p-6">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-br from-[#94753c] to-[#c5a872] text-white p-2 rounded-xl flex items-center justify-center"><i class="fas fa-graduation-cap text-xs"></i></div>
+                    <div>
+                        <h1 class="text-md font-bold text-slate-800 tracking-wide">SiNilai Portal</h1>
+                        <span id="user-role-badge" class="text-[9px] text-[#94753c] bg-[#faf9f6] px-2 py-0.5 rounded font-semibold tracking-wider uppercase border border-amber-100 inline-block mt-0.5">Role</span>
+                    </div>
+                </div>
+            </div>
+            
+            <nav id="sidebar-nav" class="flex flex-col p-4 space-y-1">
+                <p class="text-[10px] font-medium text-slate-400 uppercase tracking-widest mb-1.5 ml-3">Menu Utama</p>
+                <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item flex items-center p-2.5 text-slate-500 rounded-lg nav-active"><i class="fas fa-th-large w-6 text-xs"></i><span class="text-xs">Panel Ringkasan</span></a>
+                
+                <p class="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-4 mb-1.5 ml-3 root-admin">Data Referensi</p>
+                <a href="#" onclick="switchTab('dosen')" id="nav-dosen" class="nav-item flex items-center p-2.5 text-slate-500 rounded-lg root-admin"><i class="fas fa-user-tie w-6 text-xs"></i><span class="text-xs">Master Dosen</span></a>
+                <a href="#" onclick="switchTab('master')" id="nav-master" class="nav-item flex items-center p-2.5 text-slate-500 rounded-lg root-admin"><i class="fas fa-layer-group w-6 text-xs"></i><span class="text-xs">Master Matkul</span></a>
+                
+                <p class="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-4 mb-1.5 ml-3 root-dosen">Operasional</p>
+                <a href="#" onclick="switchTab('input')" id="nav-input" class="nav-item flex items-center p-2.5 text-slate-500 rounded-lg root-dosen"><i class="fas fa-pen-to-square w-6 text-xs"></i><span class="text-xs">Input Nilai Akademik</span></a>
+                
+                <p class="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-4 mb-1.5 ml-3">Transkrip</p>
+                <a href="#" onclick="switchTab('view')" id="nav-view" class="nav-item flex items-center p-2.5 text-slate-500 rounded-lg"><i class="fas fa-book-open w-6 text-xs"></i><span class="text-xs">Buku Transkrip Induk</span></a>
+
+                <div class="pt-8">
+                    <button onclick="logoutGateway()" class="w-full py-2 bg-red-50/60 hover:bg-red-50 text-red-500 font-medium text-[10px] uppercase rounded-lg border border-red-100 transition-colors"><i class="fas fa-power-off mr-2"></i>Keluar Aplikasi</button>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 md:p-8 relative">
+            
+            <!-- PANEL UTAMA (DASHBOARD) -->
+            <section id="sec-dashboard" class="block space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-200/60 pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Panel Ringkasan & Statistik</h2>
+                        <p class="text-slate-400 text-[11px] mt-0.5">Analisis agregasi capaian indeks prestasi mahasiswa global</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="luxe-vessel rounded-xl p-4 flex items-center bg-white">
+                        <div class="w-9 h-9 rounded-lg bg-amber-50/60 text-[#c5a872] flex items-center justify-center mr-3 border border-amber-100/40"><i class="fas fa-user-tie text-xs"></i></div>
+                        <div><p class="text-[10px] text-slate-400 font-medium uppercase mb-0.5">Dosen Terdaftar</p><p class="text-xl font-bold text-slate-800 font-mono" id="stat-dosen">0</p></div>
+                    </div>
+                    <div class="luxe-vessel rounded-xl p-4 flex items-center bg-white">
+                        <div class="w-9 h-9 rounded-lg bg-amber-50/60 text-[#c5a872] flex items-center justify-center mr-3 border border-amber-100/40"><i class="fas fa-users text-xs"></i></div>
+                        <div><p class="text-[10px] text-slate-400 font-medium uppercase mb-0.5">Total Mahasiswa</p><p class="text-xl font-bold text-slate-800 font-mono" id="stat-mhs">0</p></div>
+                    </div>
+                    <div class="luxe-vessel rounded-xl p-4 flex items-center bg-white">
+                        <div class="w-9 h-9 rounded-lg bg-amber-50/60 text-[#c5a872] flex items-center justify-center mr-3 border border-amber-100/40"><i class="fas fa-book text-xs"></i></div>
+                        <div><p class="text-[10px] text-slate-400 font-medium uppercase mb-0.5">Katalog Matkul</p><p class="text-xl font-bold text-slate-800 font-mono" id="stat-matkul-master">0</p></div>
+                    </div>
+                    <div class="luxe-vessel rounded-xl p-4 flex items-center bg-white">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-50/60 text-emerald-600 flex items-center justify-center mr-3 border border-emerald-100/40"><i class="fas fa-check-circle text-xs"></i></div>
+                        <div><p class="text-[10px] text-slate-400 font-medium uppercase mb-0.5">Nilai Terproses</p><p class="text-xl font-bold text-slate-800 font-mono" id="stat-nilai">0</p></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <div class="luxe-vessel rounded-xl p-5 lg:col-span-2 bg-white">
+                        <h3 class="text-xs font-semibold text-slate-700 mb-3 uppercase tracking-wider">Visualisasi Grafik Indeks Prestasi</h3>
+                        <div class="w-full max-h-[220px]"><canvas id="chart-nilai-analytics"></canvas></div>
+                    </div>
+                    <div class="luxe-vessel rounded-xl p-5 flex flex-col justify-between bg-gradient-to-br from-[#faf9f6] to-white">
+                        <div class="space-y-2">
+                            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Informasi Masuk Sistem</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">Selamat datang kembali, <span id="dashboard-user-name" class="text-slate-700 font-bold">User</span>. Anda saat ini terhubung ke kluster pangkalan data awan terpusat.</p>
+                        </div>
+                        <div class="border-t border-slate-200/60 pt-3 mt-4 flex items-center justify-between">
+                            <span class="text-[9px] text-[#94753c] font-mono font-bold tracking-wider bg-amber-50 px-2 py-0.5 rounded border border-amber-100">CLOUD NODE OK</span>
+                            <span class="text-[10px] text-slate-400 font-mono" id="live-clock">2026</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL MASTER DOSEN -->
+            <section id="sec-dosen" class="hidden space-y-5">
+                <div class="border-b border-slate-200/60 pb-4">
+                    <h2 class="text-xl font-bold text-slate-800">Pendaftaran & Direktori Dosen</h2>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-1">
+                        <div class="luxe-vessel rounded-xl p-5 bg-white">
+                            <h3 class="font-semibold mb-4 text-slate-700 uppercase text-[10px] border-b border-slate-100 pb-2"><i class="fas fa-plus text-[#c5a872] mr-1.5"></i>Tambah Dosen Baru</h3>
+                            <form id="form-dosen" onsubmit="handleDosenSubmit(event)" class="space-y-3.5">
+                                <div><label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase">Nomor Induk Dosen (NIDN)</label><input type="text" id="dosen-nidn" required class="w-full px-3 py-2 luxury-input text-xs font-mono"></div>
+                                <div><label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase">Nama Lengkap & Gelar</label><input type="text" id="dosen-nama" required class="w-full px-3 py-2 luxury-input text-xs"></div>
+                                <button type="submit" class="w-full btn-gold-solid py-2.5 px-4 rounded-xl text-xs font-semibold">Simpan Rekaman Dosen</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <div class="luxe-vessel rounded-xl overflow-hidden bg-white">
+                            <table class="w-full text-left border-collapse">
+                                <thead><tr class="text-slate-400 text-[10px] uppercase tracking-wider border-b border-slate-200/60 bg-slate-50/50"><th class="p-3.5 pl-5">NIDN</th><th class="p-3.5">Nama Lengkap Dosen</th><th class="p-3.5 text-center pr-5">Otoritas Dokumen</th></tr></thead>
+                                <tbody id="table-dosen-body" class="divide-y divide-slate-100 text-xs text-slate-600"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL MASTER MATA KULIAH -->
+            <section id="sec-master" class="hidden space-y-5">
+                <div class="border-b border-slate-200/60 pb-4">
+                    <h2 class="text-xl font-bold text-slate-800">Kurikulum Katalog Mata Kuliah</h2>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-1">
+                        <div class="luxe-vessel rounded-xl p-5 bg-white">
+                            <h3 class="font-semibold mb-4 text-slate-700 uppercase text-[10px] border-b border-slate-100 pb-2"><i class="fas fa-plus text-[#c5a872] mr-1.5"></i>Registrasi Mata Kuliah</h3>
+                            <form id="form-master" onsubmit="handleMasterSubmit(event)" class="space-y-3.5">
+                                <div><label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase">Kode Unik Mata Kuliah</label><input type="text" id="master-kode" required class="w-full px-3 py-2 luxury-input text-xs font-mono" placeholder="Contoh: IF-202"></div>
+                                <div><label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase">Nama Mata Kuliah</label><input type="text" id="master-nama" required class="w-full px-3 py-2 luxury-input text-xs"></div>
+                                <div><label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase">Beban Bobot SKS</label><input type="number" id="master-sks" min="1" max="6" required class="w-full px-3 py-2 luxury-input text-xs"></div>
+                                <button type="submit" class="w-full btn-gold-solid py-2.5 px-4 rounded-xl text-xs font-semibold">Deploy Mata Kuliah</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <div class="luxe-vessel rounded-xl overflow-hidden bg-white">
+                            <table class="w-full text-left border-collapse">
+                                <thead><tr class="text-slate-400 text-[10px] uppercase tracking-wider border-b border-slate-200/60 bg-slate-50/50"><th class="p-3.5 pl-5">Kode</th><th class="p-3.5">Nama Mata Kuliah</th><th class="p-3.5 text-center">Bobot Kredit</th><th class="p-3.5 text-center pr-5">Aksi</th></tr></thead>
+                                <tbody id="table-master-body" class="divide-y divide-slate-100 text-xs text-slate-600"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL INPUT NILAI (Dengan Validasi Angka <= 100) -->
+            <section id="sec-input" class="hidden space-y-5">
+                <div class="border-b border-slate-200/60 pb-4">
+                    <h2 class="text-xl font-bold text-slate-800">Entry Nilai Evaluasi Akademik</h2>
+                    <p class="text-slate-400 text-[11px] mt-0.5">Penetapan nilai akhir mahasiswa berdasar persentase baku nilai tugas, kuis, UTS, dan UAS</p>
+                </div>
+                
+                <div class="luxe-vessel rounded-xl p-6 max-w-2xl mx-auto bg-white">
+                    <form id="form-nilai" onsubmit="handleFormSubmit(event)" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase">Nomor Induk Mahasiswa (NIM)</label><input type="text" id="input-nim" required class="w-full px-3 py-2 luxury-input text-xs font-mono"></div>
+                            <div><label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase">Nama Lengkap Mahasiswa</label><input type="text" id="input-nama" required class="w-full px-3 py-2 luxury-input text-xs"></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div><label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase">Semester Aktif</label><input type="number" id="input-semester" min="1" max="14" required class="w-full px-3 py-2 luxury-input text-xs"></div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase">Hubungkan Acuan Mata Kuliah</label>
+                                <select id="input-matkul" required onchange="updateSksDisplay()" class="w-full px-3 py-2 bg-[#fdfdfd] border border-slate-200 rounded-xl text-xs text-slate-600 outline-none focus:border-[#c5a872]"></select>
+                                <input type="hidden" id="input-sks">
+                            </div>
+                        </div>
+
+                        <!-- PARAMETER NILAI: SECURITY BOUNDARY MAX 100 -->
+                        <div class="p-4 bg-slate-50/50 rounded-xl border border-slate-100 space-y-3">
+                            <p class="text-[10px] uppercase font-bold text-[#94753c] tracking-wide"><i class="fas fa-shield-halved mr-1"></i>Komponen Penilaian (Maksimum Isian Angka 100)</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div><label class="block text-[9px] font-medium text-slate-400 mb-1 text-center">Tugas (20%)</label><input type="number" id="num-tugas" min="0" max="100" required class="w-full p-2 luxury-input text-center text-xs font-mono"></div>
+                                <div><label class="block text-[9px] font-medium text-slate-400 mb-1 text-center">Kuis (10%)</label><input type="number" id="num-kuis" min="0" max="100" required class="w-full p-2 luxury-input text-center text-xs font-mono"></div>
+                                <div><label class="block text-[9px] font-medium text-slate-400 mb-1 text-center">UTS (30%)</label><input type="number" id="num-uts" min="0" max="100" required class="w-full p-2 luxury-input text-center text-xs font-mono"></div>
+                                <div><label class="block text-[9px] font-medium text-slate-400 mb-1 text-center">UAS (40%)</label><input type="number" id="num-uas" min="0" max="100" required class="w-full p-2 luxury-input text-center text-xs font-mono"></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full btn-gold-solid py-3 px-4 rounded-xl text-xs font-semibold uppercase tracking-wide">Kalkulasi & Sinkronkan Data</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- BUKU INDUK TRANSKRIP NILAI -->
+            <section id="sec-view" class="space-y-5">
+                <div class="border-b border-slate-200/60 pb-4">
+                    <h2 class="text-xl font-bold text-slate-800">Buku Rekap Transkrip Mahasiswa</h2>
+                </div>
+                
+                <div class="luxe-vessel rounded-xl overflow-hidden bg-white">
+                    <table class="w-full text-left border-collapse">
+                        <thead><tr class="text-slate-400 text-[10px] uppercase tracking-wider border-b border-slate-200/60 bg-slate-50/50"><th class="p-4 pl-5">Identitas Mahasiswa</th><th class="p-4 text-center">Akumulasi Kredit SKS</th><th class="p-4 text-center">IPK Global</th><th class="p-4 text-center pr-5">Aksi Ringkasan</th></tr></thead>
+                        <tbody id="table-mhs-body" class="divide-y divide-slate-100 text-xs text-slate-600"></tbody>
+                    </table>
+                </div>
+
+                <!-- TAMPILAN PRINTSHEET KHS (TARGET UNDUH PDF LOKAL LAPTOP) -->
+                <div id="detail-view" class="hidden luxe-vessel rounded-xl overflow-hidden mt-6 p-6 bg-white relative">
+                    <div class="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800 tracking-wide">KARTU HASIL STUDI KELULUSAN</h3>
+                            <p class="text-[#94753c] font-mono text-[10px] tracking-wider uppercase mt-0.5">NIM: <span id="detail-nim">NIM</span></p>
+                            <p class="text-slate-800 text-xs font-semibold mt-1">Nama Mahasiswa: <span id="detail-nama" class="font-normal text-slate-500">Nama</span></p>
+                        </div>
+                        <div class="flex space-x-2" id="pdf-action-buttons">
+                            <button onclick="downloadTranscriptPDF()" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-[10px] font-semibold uppercase tracking-wide shadow-sm hover:brightness-105 transition-all">
+                                <i class="fas fa-download mr-1"></i> Ekspor PDF Ke Laptop
+                            </button>
+                            <button onclick="closeDetail()" class="text-slate-400 border border-slate-200 px-2 py-1 rounded-lg hover:bg-slate-50"><i class="fas fa-times text-xs"></i></button>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-[#faf9f6] to-white rounded-xl p-4 flex justify-between items-center mb-6 border border-amber-100/40">
+                        <div><p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wide">Indeks Prestasi Kumulatif (IPK)</p><p class="text-2xl font-bold text-slate-700 font-mono mt-0.5" id="detail-ipk">0.00</p></div>
+                    </div>
+                    <h4 class="font-bold text-[9px] text-slate-400 mb-3 uppercase tracking-wider border-b border-slate-100 pb-1">Distribusi Rekapitulasi Nilai Matkul</h4>
+                    <div id="detail-semesters" class="space-y-4"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast Element -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-full opacity-0 transition-all duration-350 bg-white text-slate-800 px-5 py-3 rounded-xl border border-amber-200 shadow-lg min-w-[260px] z-50">
+        <div class="flex items-center"><div id="toast-icon" class="mr-2.5"></div><span id="toast-msg" class="text-[10px] font-bold uppercase text-slate-700 tracking-wide"></span></div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Tampilan Jam Dinamis Aktif Pada Dashboard Informasi
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'medium' });
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "buildCommand": "echo 'Build complete'",
+  "public": "public",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html",
+      "statusCode": 307
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ]
+}
