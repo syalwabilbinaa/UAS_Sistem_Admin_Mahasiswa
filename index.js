@@ -5,18 +5,18 @@ const fs = require('fs');
 
 const app = express();
 
-// Middleware
+// Middleware Utama
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Debug logging
+// Debug logging untuk melacak permintaan masuk di Vercel Logs
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
 });
 
-// Serve static files from public folder
+// PENTING: Sajikan aset statis dari folder public di bagian paling atas middleware
 app.use(express.static(path.join(__dirname, 'public'), {
     etag: false,
     maxAge: '1d'
@@ -26,9 +26,9 @@ app.use(express.static(path.join(__dirname, 'public'), {
 app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'ok', 
-        message: 'Server is running',
+        message: 'Server is running perfectly',
         timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
+        environment: process.env.NODE_ENV || 'production'
     });
 });
 
@@ -36,13 +36,24 @@ app.get('/api/version', (req, res) => {
     res.json({ version: '1.0.0', name: 'SiNilai' });
 });
 
-// Static file routes - explicitly serve files
+// Penanganan Rute Utama / Landing Page
+app.get('/', (req, res) => {
+    const indexPath = path.join(__dirname, 'public', 'index.html');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        // Fallback jika arsitektur Vercel memisahkan direktori aset statis
+        res.sendFile(path.resolve('public/index.html'));
+    }
+});
+
+// Eksplisit Router untuk index.html & app.js demi menghindari konflik 404 Vercel
 app.get('/index.html', (req, res) => {
     const indexPath = path.join(__dirname, 'public', 'index.html');
     if (fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
     } else {
-        res.status(404).json({ error: 'index.html not found' });
+        res.sendFile(path.resolve('public/index.html'));
     }
 });
 
@@ -52,24 +63,28 @@ app.get('/app.js', (req, res) => {
         res.setHeader('Content-Type', 'application/javascript');
         res.sendFile(appPath);
     } else {
-        res.status(404).json({ error: 'app.js not found' });
+        res.sendFile(path.resolve('public/app.js'));
     }
 });
 
-// Catch-all: Serve index.html for SPA routing
+// Catch-all: Mengarahkan semua rute SPA ke index.html
 app.get('*', (req, res) => {
     const indexPath = path.join(__dirname, 'public', 'index.html');
     if (fs.existsSync(indexPath)) {
         res.setHeader('Content-Type', 'text/html');
         res.sendFile(indexPath);
     } else {
-        res.status(404).json({ 
-            error: 'Not found',
-            path: req.url,
-            method: req.method,
-            publicPath: path.join(__dirname, 'public'),
-            exists: fs.existsSync(path.join(__dirname, 'public'))
-        });
+        const fallbackPath = path.resolve('public/index.html');
+        if (fs.existsSync(fallbackPath)) {
+            res.setHeader('Content-Type', 'text/html');
+            res.sendFile(fallbackPath);
+        } else {
+            res.status(404).json({ 
+                error: 'Not found',
+                message: 'Silakan pastikan struktur folder public Anda sudah di-push dengan benar ke GitHub.',
+                path: req.url
+            });
+        }
     }
 });
 
@@ -78,16 +93,15 @@ app.use((err, req, res, next) => {
     console.error('Error:', err.stack);
     res.status(500).json({ 
         error: 'Internal Server Error',
-        message: err.message,
-        environment: process.env.NODE_ENV || 'development'
+        message: err.message
     });
 });
 
-// Export for Vercel serverless functions
+// Export untuk kebutuhan Vercel Serverless Engine
 module.exports = app;
 
-// Start server if running locally
-if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'vercel') {
+// Jalankan server jika dijalankan secara lokal di komputer
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
         console.log(`🚀 Server berjalan di http://localhost:${port}`);
@@ -95,4 +109,3 @@ if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'vercel') 
         console.log(`📄 index.html exists: ${fs.existsSync(path.join(__dirname, 'public', 'index.html'))}`);
     });
 }
-
